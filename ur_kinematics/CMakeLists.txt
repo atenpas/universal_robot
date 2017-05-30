@@ -20,7 +20,7 @@ catkin_package(
 ###########
 
 include_directories(SYSTEM ${Boost_INCLUDE_DIR})
-include_directories(include ${catkin_INCLUDE_DIRS})
+include_directories(include ${catkin_INCLUDE_DIRS} /usr/include/python2.7/)
 
 add_library(ur3_kin src/ur_kin.cpp)
 set_target_properties(ur3_kin PROPERTIES COMPILE_DEFINITIONS "UR3_PARAMS")
@@ -52,6 +52,19 @@ target_link_libraries(ur10_moveit_plugin
   ${catkin_LIBRARIES}
   ${Boost_LIBRARIES}
   ur10_kin)
+
+PYTHON_ADD_MODULE(ur_kin_py src/ur_kin_py.cpp)
+target_link_libraries(ur_kin_py ur10_kin boost_python boost_numpy ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+set_target_properties(ur_kin_py 
+PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}
+SUFFIX ".so")
+
+# add_library(ur10_kin_py src/ur_kin_py.cpp)
+# target_link_libraries(ur10_kin_py ${PYTHON_LIBRARIES} boost_numpy ur10_kin)
+# set_target_properties(ur10_kin_py PROPERTIES
+  # PREFIX ""
+  # COMPILE_DEFINITIONS "UR10_PARAMS"
+  # LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION} )
 
 
 #############
