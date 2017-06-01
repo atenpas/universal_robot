@@ -1,10 +1,20 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.2.2)
 project(ur_kinematics)
 
 find_package(catkin REQUIRED COMPONENTS roscpp geometry_msgs moveit_core moveit_kinematics
   moveit_ros_planning pluginlib tf_conversions)
 
-find_package(Boost REQUIRED COMPONENTS system)
+FIND_PACKAGE(PythonInterp)
+FIND_PACKAGE(PythonLibs)
+
+#find_package(boost_numpy)
+
+#set(Boost_NO_BOOST_CMAKE TRUE)
+#set(Boost_NO_SYSTEM_PATHS TRUE)
+#set(BOOST_ROOT "/usr/local/include/boost")
+set(BOOST_ROOT "/home/ur5/boost_1_63_0")
+set(Boost_INCLUDE_DIR "/home/ur5/boost_1_63_0/include")
+find_package(Boost 1.63 REQUIRED COMPONENTS system python numpy)
 
 catkin_package(
   INCLUDE_DIRS include
@@ -19,8 +29,8 @@ catkin_package(
 ## Build ##
 ###########
 
-include_directories(SYSTEM ${Boost_INCLUDE_DIR})
-include_directories(include ${catkin_INCLUDE_DIRS} /usr/include/python2.7/)
+#include_directories(SYSTEM ${Boost_INCLUDE_DIR})
+include_directories(include ${catkin_INCLUDE_DIRS} /usr/include/python2.7/ ${Boost_INCLUDE_DIR})
 
 add_library(ur3_kin src/ur_kin.cpp)
 set_target_properties(ur3_kin PROPERTIES COMPILE_DEFINITIONS "UR3_PARAMS")
@@ -54,17 +64,17 @@ target_link_libraries(ur10_moveit_plugin
   ur10_kin)
 
 PYTHON_ADD_MODULE(ur_kin_py src/ur_kin_py.cpp)
-target_link_libraries(ur_kin_py ur10_kin boost_python boost_numpy ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(ur_kin_py ur5_kin boost_python boost_numpy ${PYTHON_LIBRARIES} ${Boost_LIBRARIES})
 set_target_properties(ur_kin_py 
 PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION}
 SUFFIX ".so")
 
-# add_library(ur10_kin_py src/ur_kin_py.cpp)
-# target_link_libraries(ur10_kin_py ${PYTHON_LIBRARIES} boost_numpy ur10_kin)
-# set_target_properties(ur10_kin_py PROPERTIES
-  # PREFIX ""
-  # COMPILE_DEFINITIONS "UR10_PARAMS"
-  # LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION} )
+#add_library(ur_kin_py src/ur_kin_py.cpp)
+#target_link_libraries(ur_kin_py ${PYTHON_LIBRARIES} boost_numpy boost_python ur5_kin)
+#set_target_properties(ur_kin_py PROPERTIES
+  #PREFIX ""
+  #COMPILE_DEFINITIONS "UR5_PARAMS"
+  #LIBRARY_OUTPUT_DIRECTORY ${CATKIN_DEVEL_PREFIX}/${CATKIN_PACKAGE_PYTHON_DESTINATION} )
 
 
 #############
